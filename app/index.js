@@ -5,8 +5,8 @@ const fileUpload = require('express-fileupload');
 const app = express();
 const uuidv4 = require('uuid/v4');
 var filename = require('file-name');
-const { child_process } = require('child_process');
-
+const { execFile } = require('child_process');
+var glob = require("glob")
 
 const path = require('path')
 
@@ -33,7 +33,7 @@ app.post('/upload', function (req, res) {
         return res.status(400).send(message);
     }
 
-    var tempFile = TempFile(pdfFile.name, DATA_DIR, '_enc', '.pdf');
+    var tempFile = TempFile(pdfFile.name, DATA_DIR, '.encrypted', '.pdf');
 
     pdfFile.mv(tempFile.tempPath, async function (error) {
         if (error) {
@@ -41,23 +41,34 @@ app.post('/upload', function (req, res) {
             return res.status(500).send(error);
         }
 
-        child_process.execFile(path.join(PATH_TO_RUBY_ORIGAMI_GEM_PDFENCRYPT), [tempFile.tempPath, '-p', password, '-o', tempFile.tempConvertedPath], (error, stdout, stderr) => {
+        resolveFilePath(PATH_TO_RUBY_ORIGAMI_GEM_PDFENCRYPT, (error, execFilePath) => { // not sure if necessary
             if (error) {
                 console.error(error);
                 return res.status(500).send(error);
             }
 
-            return res.download(tempFile.tempConvertedPath, tempFile.convertedName);
-        });
+            execFile(execFilePath, [tempFile.tempPath, '-p', password, '-o', tempFile.tempConvertedPath], (error, stdout, stderr) => {
+                if (error) {
+                    console.error(error);
+                    return res.status(500).send(error);
+                }
+
+                return res.download(tempFile.tempConvertedPath, tempFile.convertedName);
+            });
+        })
     });
 });
+app.get('/upload', (req, res) => {
+    return res.redirect('/');
+})
 
-app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))
+app.listen(PORT, () => console.log(`App is listening on port ${PORT}!`))
 
 
 function TempFile(originalName, storageDirectory, convertedNameSuffix, extension = '') {
-    var tempName = uuidv4() + extension;
-    var tempPath = path.join(storageDirectory, tempName);
+    var tempName = uuidv4();
+    var tempNameExt = tempName + extension;
+    var tempPath = path.join(storageDirectory, tempNameExt);
     var tempConvertedPath = path.join(storageDirectory, tempName + convertedNameSuffix + extension);
     var convertedName = filename(originalName) + convertedNameSuffix + extension;
 
@@ -68,4 +79,18 @@ function TempFile(originalName, storageDirectory, convertedNameSuffix, extension
         tempConvertedPath,
         convertedName,
     }
+}
+
+function resolveFilePath(filePath, callback) {
+    glob(filePath, function (error, files) {
+        if (error) {
+            return callback(error);
+        }
+
+        if (files.length <= 0) {
+            return callback('no files found for glob ' + filePath);
+        }
+
+        return callback(null, files[0]);
+    })
 }
