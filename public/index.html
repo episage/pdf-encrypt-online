@@ -1,0 +1,59 @@
+<html>
+
+<head>
+    <!-- <link rel="stylesheet" href="node_modules/normalize.css/normalize.css" /> -->
+
+    <style>
+        html {
+            font-size: medium;
+        }
+
+        body {
+            font-family: georgia, times, serif;
+            margin: 2rem auto;
+            max-width: 40em;
+            font-size: 1rem;
+            line-height: 1.6;
+            padding: 0 2em;
+
+            color: #444;
+            background-color: #a8023008;
+        }
+
+        h1,
+        h2,
+        h3 {
+            line-height: 1.2
+        }
+
+        input {
+            /* display: flex; */
+            /* margin: 1em; */
+            font-size: medium;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <h1>Program do szyfracji plików PDF</h1>
+
+    <form ref='uploadForm' id='uploadForm' action='upload' method='post' encType="multipart/form-data">
+        <fieldset>
+            <!-- <legend>Fruit juice size</legend> -->
+            <p>
+                <input type="file" name="pdf" />
+            </p>
+            <p>
+                <div>Hasło do pliku</div>
+                <input type="text" name="password" />
+            </p>
+            <p>
+                <input type='submit' value='Zaszyfruj' />
+            </p>
+        </fieldset>
+    </form>
+</body>
+
+</html>
