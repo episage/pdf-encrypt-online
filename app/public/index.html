@@ -1,8 +1,6 @@
 <html>
 
 <head>
-    <!-- <link rel="stylesheet" href="node_modules/normalize.css/normalize.css" /> -->
-
     <style>
         html {
             font-size: medium;
@@ -17,7 +15,7 @@
             padding: 0 2em;
 
             color: #444;
-            background-color: #a8023008;
+            background-color: #ececec08;
         }
 
         h1,
@@ -37,20 +35,19 @@
 
 <body>
 
-    <h1>Program do szyfracji plików PDF</h1>
+    <h1>PDF encryption service</h1>
 
     <form ref='uploadForm' id='uploadForm' action='upload' method='post' encType="multipart/form-data">
         <fieldset>
-            <!-- <legend>Fruit juice size</legend> -->
             <p>
                 <input type="file" name="pdf" />
             </p>
             <p>
-                <div>Hasło do pliku</div>
+                <div>PDF password</div>
                 <input type="text" name="password" />
             </p>
             <p>
-                <input type='submit' value='Zaszyfruj' />
+                <input type='submit' value='Encrypt' />
             </p>
         </fieldset>
     </form>
